@@ -17,7 +17,27 @@ const pinia = createPinia();
 pinia.use(createPersistedState());
 app.use(pinia);
 
-const vuetify = createVuetify();
+const myTheme = {
+  dark: false,
+  colors: {
+    primary: '#3f51b5',
+    secondary: '#2196f3',
+    accent: '#00bcd4',
+    error: '#ff5722',
+    warning: '#ffeb3b',
+    info: '#cddc39',
+    success: '#03a9f4'
+  }
+};
+
+const vuetify = createVuetify({
+  theme: {
+    defaultTheme: 'myTheme',
+    themes: {
+      myTheme,
+    }
+  }
+});
 app.use(vuetify);
 
 app.mount("#app");

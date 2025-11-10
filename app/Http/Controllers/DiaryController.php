@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Diary;
+use App\Enums\MealType;
 use Illuminate\Http\Request;
 
 class DiaryController extends Controller
@@ -10,9 +11,21 @@ class DiaryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($date)
     {
-        //
+        $date = date('Y-m-d', strtotime($date));
+
+        $foods = Diary::where('date', $date)
+            ->orderBy('meal_type')->orderBy('recipe_id')->orderBy('id')->get();
+        $result = [];
+        foreach (MealType::cases() as $type) {
+            $result[] = [$type->name => ['calory' => 0, 'foods' => []]];
+        }
+        foreach ($foods as $food) {
+            $result[$food->meal_type->name]['calory'] += $food->calory;
+            $result[$food->meal_type->name]['foods'][] = $food->toArray();
+        }
+        return $this->responseSuccess($result);
     }
 
     /**

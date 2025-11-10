@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('food', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id')->indexi();
             $table->string('name');
             $table->string('alias_names');
             $table->decimal('total_weight', 6, 2);

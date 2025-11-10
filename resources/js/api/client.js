@@ -3,7 +3,9 @@ import router from '@/router';
 import { useUserStore } from '@/stores/user';
 
 const client = axios.create({
-  baseURL: '/api'
+  baseURL: '/api',
+  withCredentials: true,
+  withXSRFToken: true,
 });
 
 // レスポンスインターセプター
@@ -13,25 +15,66 @@ client.interceptors.response.use(
   },
   (error) => {
     const userStore = useUserStore();
-    // サーバーが401 Unauthorizedを返した場合
-    if (error.response && (error.response.status === 401 || error.response.status === 419)) {
+    if ([401, 419].includes(error.response?.status)) {
       userStore.logout();
-      router.push('/login');
-      return null;
+      router.push({ name: 'login'});
+    } else if (error.response?.status == 429) {
+      return { 'data': { 'success': false, 'message': '試行回数が多すぎます。しばらくしてから再度お試しください。' } };
     }
     return Promise.reject(error);
   }
 )
 
-export const login = async (email, password) => {
-  console.log("login");
+export const register = async (form) => {
   try {
     await axios.get('/sanctum/csrf-cookie');
-    const res = await client.post('/user/login', {email: email, password: password});
-    console.log("login success");
-    console.log(res);
+    const res = await client.post('/register', form);
+    console.log("register: ", res);
+    return res.data;
   } catch (err) {
-    console.log("login error");
+    console.log("api/register err: ", err);
+    return err.response;
+  }
+}
+
+export const login = async (form) => {
+  try {
+    await axios.get('/sanctum/csrf-cookie');
+    const res = await client.post('/login', form);
+    console.log("api/login", res);
+    return res.data;
+  } catch (err) {
+    console.log("api/login error", err);
+    return null;
+  }
+}
+
+export const logout = async () => {
+  try {
+    const res = await client.post('/logout');
+  } catch (err) {
+    console.log("api/logout", err);
+  }
+}
+
+export const sendEmailVerification = async () => {
+  try {
+    const res = await client.post('/email/verification-notification');
+    return res.data;
+  } catch (err) {
+    console.log("verification-notification: ", err);
+  }
+}
+
+export const verifyEmail = async (params, query) => {
+  try {
+    const res = await axios.get(`/api/email/verify/${params.id}/${params.hash}?expires=${query.expires}&signature=${query.signature}`,
+        { withCredentials: true, withXSRFToken: true });
+    console.log("email/verify: ", res);
+    return res.data;
+  } catch (err) {
+    console.log("email/verify err: ", err);
+    return err;
   }
 }
 
@@ -43,10 +86,9 @@ export const getDiary = async (date = null) => {
   }
   try {
     const res = await client.get('/diary/' + date);
-    console.log("client success");
-    console.log(res);
+    console.log("getDiary: ", res);
+    return res.data;
   } catch (err) {
-    console.log("client error");
-    console.log(err);
+    console.log("getDiary error: ", err);
   }
 }

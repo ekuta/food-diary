@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="height-screen">
 
 <head>
     <meta charset="utf-8">
@@ -9,8 +9,12 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="h-full">
-    <div id="app" class="h-full"></div>
+<body class="height-screen">
+    <div id="app" class="height-screen"></div>
+    @if (config('app.eruda'))
+        <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+        <script>eruda.init();</script>
+    @endif
 </body>
 
 </html>

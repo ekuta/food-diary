@@ -2,6 +2,8 @@
 
 return [
 
+    'eruda' => env('ERUDA_ENABLED', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
