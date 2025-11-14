@@ -92,3 +92,13 @@ export const getDiary = async (date = null) => {
     console.log("getDiary error: ", err);
   }
 }
+
+export const searchMextFood = async (searchString) => {
+  try {
+    const res = await client.post('/mext-food/search', { searchString: searchString });
+    console.log("searchMextFood: ", res);
+    return res.data;
+  } catch (err) {
+    console.log("searchMextFood error: ", err);
+  }
+}

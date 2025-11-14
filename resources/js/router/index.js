@@ -25,11 +25,17 @@ const router = createRouter({
       name: "diary",
       component: () => import("../views/DiaryView.vue"),
     },
+    { path: '/food', redirect: '/food/0' },
     {
-      path: "/food",
+      path: "/food/:id",
       name: "food",
       component: () => import("../views/FoodView.vue"),
-    }
+    },
+    {
+      path: "/mext-food",
+      name: "mext-food",
+      component: () => import("../views/MextFoodView.vue"),
+    },
   ],
 });
 

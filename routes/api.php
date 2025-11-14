@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiaryController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\MextFoodController;
 
 Route::post('/register', [UserController::class, 'register'])->middleware(['throttle:6,1']);
 Route::post('/login', [UserController::class, 'login'])->middleware(['throttle:6,1']);
@@ -35,9 +36,6 @@ Route::apiResource('foods', FoodController::class)->whereNumber('food')
 Route::apiResource('recipes', RecipeController::class)->whereNumber('recipe')
     ->middleware('auth:sanctum');
 
-Route::apiResource('foods', FoodController::class)->whereNumber('food')
+Route::post('/mext-food/search', [MextFoodController::class, 'search'])
     ->middleware('auth:sanctum');
-Route::apiResource('recipes', RecipeController::class)->whereNumber('recipe')
-    ->middleware('auth:sanctum');
-
 

@@ -75,7 +75,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
-import { login, sendEmailVerification, verifyEmail } from '@/api/client';
+import { login, sendEmailVerification, verifyEmail } from '@/utils/client';
 import { useUserStore } from '@/stores/user';
 import { useStateStore } from '@/stores/state';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
@@ -111,7 +111,7 @@ const onSubmit = async () => {
   stateStore.loading = true;
   const res = await login(form.value);
   stateStore.loading = false;
-  if (res.success) {
+  if (res?.success) {
     userStore.login(res.data);
     if (!res.data.email_verified_at) {
       verifyStatus.value = "verifying";
@@ -121,7 +121,7 @@ const onSubmit = async () => {
     } else {
       router.push({ name: 'diary' });
     }
-  } else {
+  } else if (res?.message) {
     errorMessage.value = res.message;
   }
 }

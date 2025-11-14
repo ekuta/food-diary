@@ -72,7 +72,7 @@
 <script setup>
 import router from '@/router';
 import { ref } from 'vue';
-import { register, sendEmailVerification } from '@/api/client';
+import { register, sendEmailVerification } from '@/utils/client';
 import { useUserStore } from '@/stores/user';
 
 const userStore = useUserStore();

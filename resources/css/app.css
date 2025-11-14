@@ -9,3 +9,16 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.v-number-input.compact-input *   {
+  --v-input-control-height: 20px;
+  --v-input-padding-top: 0px;
+  --v-field-input-padding-bottom: 0px;
+  --v-field-padding-bottom: 0px;
+  --v-field-padding-end: 0px;
+  --v-field-padding-start: 0px;
+}
+
+.centered-input .v-field__input {
+    text-align: center;
+}
