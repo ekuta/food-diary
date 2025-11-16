@@ -3,7 +3,7 @@
     <v-container>
       <v-app-bar-title>
         <div class="d-flex align-center justify-space-between">
-        <v-icon @click="router.go(-1);">mdi-window-close</v-icon>
+        <v-icon :icon="mdiWindowClose" @click="router.go(-1);" />
         食品の登録
         <v-btn color="secondary" variant="elevated" @click="onSubmit">登録</v-btn>
         </div>
@@ -45,10 +45,10 @@
           <v-card-text class="pa-2">
           <v-row dense>
             <v-col>
-              <v-radio-group v-model="form.food_unit" inline hide-details="auto" density="compact">
+              <v-radio-group v-model="form.food_unit" inline hide-details density="compact">
                 <v-radio value="g"></v-radio>
                 <div class="d-flex" @click="enableIfdisabled('g')">
-                  <div class="tw:w-14 pr-1">
+                  <div class="tw:w-16 pr-1">
                     <v-number-input v-model="gram_amount" control-variant="hidden" density="compact" hide-details="auto"
                       :disabled="form.food_unit != 'g'" class="compact-input"></v-number-input
                       >
@@ -57,7 +57,7 @@
                 </div>
                 <v-radio value="ml"></v-radio>
                 <div class="d-flex" @click="enableIfdisabled('ml')">
-                  <div class="tw:w-14 pr-1">
+                  <div class="tw:w-16 pr-1">
                     <v-number-input v-model="ml_amount" control-variant="hidden" density="compact" hide-details="auto"
                       :disabled="form.food_unit != 'ml'" class="compact-input"
                       >
@@ -65,7 +65,7 @@
                   </div>
                   mlあたり
                 </div>
-                <v-radio label="1単位(食/人前/袋/包装など)" value="serving" class="mt-n2"></v-radio>
+                <v-radio label="1単位(食/人前/袋/包装など)" value="serving" ></v-radio>
               </v-radio-group>
             </v-col>
           </v-row>
@@ -213,12 +213,19 @@
   </v-main>
 </template>
 
+<style scoped>
+.v-radio-group {
+  line-height: 2.4rem;
+}
+</style>
+
 <script setup>
 import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useStateStore } from '@/stores/state';
 import { storeFood } from '@/utils/client';
+import { mdiWindowClose } from '@mdi/js';
 
 const route = useRoute();
 const stateStore = useStateStore();

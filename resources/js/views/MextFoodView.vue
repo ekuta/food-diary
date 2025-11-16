@@ -3,7 +3,7 @@
     <v-container>
       <v-app-bar-title>
         <div class="d-flex align-center justify-space-between">
-          <v-icon @click="router.go(-1);">mdi-window-close</v-icon>
+          <v-icon :icon="mdiWindowClose" @click="router.go(-1);" />
           栄養成分データベースを検索
           <p></p>
         </div>
@@ -44,10 +44,11 @@
 </style>
 
 <script setup>
+import router from '@/router';
 import { ref, onMounted } from 'vue';
 import { useStateStore } from '@/stores/state';
 import { searchMextFood } from '@/utils/client';
-import router from '@/router';
+import { mdiWindowClose } from '@mdi/js';
 
 const state = useStateStore();
 const foods = ref([]);

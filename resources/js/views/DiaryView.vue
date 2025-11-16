@@ -8,7 +8,7 @@
           <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props">
-              <v-icon>mdi-menu</v-icon>
+              <v-icon :icon="mdiMenu" />
             </v-btn>
           </template>
           <v-list :items="items" @click:select="onMenuSelect">
@@ -23,30 +23,30 @@
     <v-container>
       <div @click="addDiary('Breakfirst')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon>mdi-weather-sunset</v-icon>朝食
+          <v-icon :icon="mdiWeatherSunset"/>朝食
           <v-spacer/>
-          <v-icon>mdi-plus</v-icon>
+          <v-icon :icon="mdiPlus" />
         </v-row>
       </div>
       <div @click="addDiary('Lunch')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon>mdi-white-balance-sunny</v-icon>昼食
+          <v-icon :icon="mdiWhiteBalanceSunny" />昼食
           <v-spacer />
-          <v-icon>mdi-plus</v-icon>
+          <v-icon :icon="mdiPlus" />
         </v-row>
       </div>
       <div @click="addDiary('Dinner')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon>mdi-weather-night</v-icon>夕食
+          <v-icon :icon="mdiWeatherNight" />夕食
           <v-spacer />
-          <v-icon>mdi-plus</v-icon>
+          <v-icon :icon="mdiPlus" />
         </v-row>
       </div>
       <div @click="addDiary('Snack')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon>mdi-food-fork-drink</v-icon>間食
+          <v-icon :icon="mdiFoodForkDrink" />間食
           <v-spacer />
-          <v-icon>mdi-plus</v-icon>
+          <v-icon :icon="mdiPlus" />
         </v-row>
       </div>
     </v-container>
@@ -68,6 +68,7 @@ import router from '@/router';
 import { ref, onMounted } from 'vue';
 import { logout, getDiary } from '@/utils/client';
 import { useUserStore } from '@/stores/user';
+import { mdiMenu, mdiWeatherSunset, mdiPlus, mdiWhiteBalanceSunny, mdiWeatherNight, mdiFoodForkDrink, mdiTarget, mdiFood, mdiLogout } from '@mdi/js';
 
 const userStore = useUserStore();
 
@@ -77,17 +78,17 @@ const items = [
   {
     title: '目標',
     value: 'target',
-    props: { prependIcon: 'mdi-target' },
+    props: { prependIcon: mdiTarget },
   },
   {
     title: '食品の登録',
     value: 'food',
-    props: { prependIcon: 'mdi-food' },
+    props: { prependIcon: mdiFood },
   },
   {
     title: 'ログアウト',
     value: 'logout',
-    props: { prependIcon: 'mdi-logout' },
+    props: { prependIcon: mdiLogout },
   },
 ];
 
