@@ -13,21 +13,24 @@ return new class extends Migration
     {
         Schema::create('food', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->indexi();
+            $table->integer('user_id')->index();
             $table->string('name');
-            $table->string('alias_names');
+            $table->string('alias_names')->nullable();
             $table->unsignedTinyInteger('food_type')->comment('1: ingredient, 2: products, 3: sets');
-            $table->decimal('total_weight', 6, 1);
-            $table->unsignedTinyInteger('usage_unit')->comment('1: gram, 2: serving, 3: package');
-            $table->decimal('tablespoon', 6, 2)->comment('grams per tablespoon');
-            $table->unsignedTinyInteger('unit_type')->comment('1: gram, 2: ml, 3: serving');
-            $table->decimal('unit_amount', 6, 1);
-            $table->unsignedTinyInteger('food_unit')->comment('1: g, 2: ml, 3: serving');
-            $table->decimal('calory', 8, 1);
-            $table->decimal('protein', 6, 1);
-            $table->decimal('fat', 6, 1);
-            $table->decimal('carbs', 6, 1);
-            $table->decimal('salt', 6, 2);
+            $table->unsignedTinyInteger('food_unit')->comment('1: gram, 2: ml, 3: serving');
+            $table->unsignedSmallInteger('food_amount');
+            $table->unsignedSmallInteger('calory');
+            $table->decimal('protein', 6, 1)->nullable();
+            $table->decimal('fat', 6, 1)->nullable();
+            $table->decimal('carbs', 6, 1)->nullable();
+            $table->decimal('salt', 6, 2)->nullable();
+            $table->unsignedTinyInteger('usage_type')
+                ->comment('bitwise flags: 1: weight, 2: spoon, 4: volume, 8: package');
+            $table->decimal('gram_per_food_unit', 6, 1)->nullable();
+            $table->decimal('gram_per_tablespoon', 6, 1)->nullable();
+            $table->decimal('ml_per_food_unit', 6, 1)->nullable();
+            $table->decimal('amount_per_package', 6, 1)->nullable();
+            $table->string('package_name');
             $table->timestamps();
         });
     }

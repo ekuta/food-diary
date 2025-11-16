@@ -10,13 +10,13 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-.v-number-input.compact-input *   {
-  --v-input-control-height: 20px;
-  --v-input-padding-top: 0px;
-  --v-field-input-padding-bottom: 0px;
+.v-number-input.compact-input *,.v-select.compact-input * {
+  --v-input-control-height: 30px;
+  --v-input-padding-top: 3px;
+  --v-field-input-padding-bottom: 3px;
   --v-field-padding-bottom: 0px;
   --v-field-padding-end: 0px;
-  --v-field-padding-start: 0px;
+  --v-field-padding-start: 12px;
 }
 
 .centered-input .v-field__input {

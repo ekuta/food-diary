@@ -8,10 +8,8 @@ use Illuminate\Support\Facades\Log;
 
 class MextFoodController extends Controller
 {
-    const MAX_SEARCH_RESULT = 30;
-    /**
-     * Store a newly created resource in storage.
-     */
+    const MAX_SEARCH_RESULT = 100;
+
     public function search(Request $request)
     {
         $searchString = $request->post('searchString');
@@ -23,29 +21,5 @@ class MextFoodController extends Controller
         }
         $foods = $query->limit(self::MAX_SEARCH_RESULT)->get(); 
         return $this->responseSuccess($foods);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(MextFood $mextFood)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, MextFood $mextFood)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MextFood $mextFood)
-    {
-        //
     }
 }

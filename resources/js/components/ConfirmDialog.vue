@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialog.open" max-width="600px" persistent>
       <v-card>
-        <v-card-title>{{ dialog.title }}</v-card-title>
+        <v-card-title color="primary">{{ dialog.title }}</v-card-title>
         <v-card-text class="border">
           <span class="text-pre-wrap" v-text="dialog.message"></span>
         </v-card-text>

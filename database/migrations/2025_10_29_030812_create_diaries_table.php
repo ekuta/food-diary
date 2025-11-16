@@ -20,11 +20,11 @@ return new class extends Migration
             $table->integer('food_id');
             $table->string('name');
             $table->unsignedTinyInteger('usage_unit');
-            $table->decimal('amount', 6, 2);
-            $table->decimal('calory', 8, 1);
-            $table->decimal('protein', 6, 2);
-            $table->decimal('fat', 6, 2);
-            $table->decimal('carbs', 6, 2);
+            $table->decimal('amount', 6, 1);
+            $table->unsignedSmallInteger('calory');
+            $table->decimal('protein', 6, 1);
+            $table->decimal('fat', 6, 1);
+            $table->decimal('carbs', 6, 1);
             $table->decimal('salt', 6, 2);
         });
     }

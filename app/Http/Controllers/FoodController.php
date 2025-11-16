@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Food;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class FoodController extends Controller
 {
@@ -20,7 +22,11 @@ class FoodController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Log::info("store", $request->post());
+        $params = $request->post();
+        $params['user_id'] = Auth::id();
+        Food::create($params);
+        return $this->responseSuccess();
     }
 
     /**

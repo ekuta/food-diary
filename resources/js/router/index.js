@@ -41,7 +41,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  console.log("router to: ", to);
   if ((to.name == 'login' || to.name == 'register') && userStore.isLogin()) {
     next({ name: 'diary' });
   } else {

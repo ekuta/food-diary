@@ -18,11 +18,11 @@ return new class extends Migration
             $table->boolean('breakfirst');
             $table->boolean('lunch');
             $table->boolean('dinner');
-            $table->decimal('calory', 6, 1);
+            $table->unsignedSmallInteger('calory');
             $table->decimal('protein', 6, 1);
             $table->decimal('fat', 6, 1);
             $table->decimal('carbs', 6, 1);
-            $table->decimal('salt', 6, 1);
+            $table->decimal('salt', 6, 2);
         });
     }
 

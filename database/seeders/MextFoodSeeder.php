@@ -23,12 +23,16 @@ class MextFoodSeeder extends Seeder
                 $row = str_replace('(', '', $row);
                 $row = str_replace(')', '', $row);
                 $row = str_replace('"', '', $row);
+                $row = str_replace("\n", ' ', $row);
                 if (in_array($row, ['Tr', '-'], true)) {
                     return 0;
                 }
                 return $row;
             }, $rows);
             $data = array_combine($header, $rows);
+            if ($data['ENERC_KCAL'] == 0) {
+                continue;
+            }
             if ($data['NACL_EQ'] == 'General') {
                 print("SKIP " . $data['成分識別子'] . "\n");
                 continue;

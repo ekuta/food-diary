@@ -1,6 +1,7 @@
 import axios from 'axios';
 import router from '@/router';
 import { useUserStore } from '@/stores/user';
+import { useStateStore } from '@/stores/state';
 
 const client = axios.create({
   baseURL: '/api',
@@ -8,14 +9,22 @@ const client = axios.create({
   withXSRFToken: true,
 });
 
-// レスポンスインターセプター
+const stateStore = useStateStore();
+
+client.interceptors.request.use(request => {
+  stateStore.loading = true;
+  return request
+})
+
 client.interceptors.response.use(
   (response) => {
+    stateStore.loading = false;
     return response;
   },
   (error) => {
+    stateStore.loading = false;
     const userStore = useUserStore();
-    if ([401, 419].includes(error.response?.status)) {
+    if ([401, 403, 419].includes(error.response?.status)) {
       userStore.logout();
       router.push({ name: 'login'});
     } else if (error.response?.status == 429) {
@@ -90,6 +99,17 @@ export const getDiary = async (date = null) => {
     return res.data;
   } catch (err) {
     console.log("getDiary error: ", err);
+  }
+}
+
+export const storeFood = async (food) => {
+  try {
+    console.log("storeFood: ", food);
+    const res = await client.post('/food', food);
+    console.log("storeFood: ", res);
+    return res.data;
+  } catch (err) {
+    console.log("storeFood error: ", err);
   }
 }
 

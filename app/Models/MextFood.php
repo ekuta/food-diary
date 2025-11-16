@@ -9,4 +9,12 @@ class MextFood extends Model
     protected $guarded = [
         'id',
     ];
+
+    protected $casts = [
+        'calory' => 'integer',
+        'protein' => 'float',
+        'fat' => 'float',
+        'carbs' => 'float',
+        'salt' => 'float',
+    ];
 }

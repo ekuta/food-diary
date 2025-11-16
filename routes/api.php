@@ -31,11 +31,13 @@ Route::prefix('diary')->middleware(['auth:sanctum', 'verified'])->group(function
     Route::put('/{date}', [DiaryController::class, 'store'])->where('date', '[0-9]{8}');
 });
 
-Route::apiResource('foods', FoodController::class)->whereNumber('food')
+Route::apiResource('food', FoodController::class)->whereNumber('food')
     ->middleware('auth:sanctum');
-Route::apiResource('recipes', RecipeController::class)->whereNumber('recipe')
+Route::apiResource('recipe', RecipeController::class)->whereNumber('recipe')
     ->middleware('auth:sanctum');
 
 Route::post('/mext-food/search', [MextFoodController::class, 'search'])
     ->middleware('auth:sanctum');
+Route::get('/mext-food/{id}', [MextFoodController::class, 'show'])
+    ->whereNumber('id')->middleware('auth:sanctum');
 

@@ -108,9 +108,7 @@ const onSubmit = async () => {
   if (!validate.valid) {
     return;
   }
-  stateStore.loading = true;
   const res = await login(form.value);
-  stateStore.loading = false;
   if (res?.success) {
     userStore.login(res.data);
     if (!res.data.email_verified_at) {
@@ -137,6 +135,7 @@ const sendVerifyEmail = async () => {
   console.log("sendVerifyEmail", res);
   if (res.success) {
     verifyStatus.value = "success";
+  console.log("init", stateStore.loading);
   } else {
     if (res.response && [401, 419].includes(res.response.status)) {
       userStore.logout();

@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('mext_food', function (Blueprint $table) {
             $table->id();
-            $table->string('name');             // 成分識別子
-            $table->decimal('calory', 8, 1);    // ENERC_KCAL
-            $table->decimal('protein', 6, 2);   // PROT-
-            $table->decimal('fat', 6, 2);       // FAT-
-            $table->decimal('carbs', 6, 2);     // CHOCDF-
-            $table->decimal('salt', 6, 2);      // NACL_EQ 括弧ありは推定値
-            $table->string('memo');             // MEMO (独自で追加)
+            $table->string('name');                 // 成分識別子
+            $table->unsignedSmallInteger('calory'); // ENERC_KCAL
+            $table->decimal('protein', 6, 1);       // PROT-
+            $table->decimal('fat', 6, 1);           // FAT-
+            $table->decimal('carbs', 6, 1);         // CHOCDF-
+            $table->decimal('salt', 6, 2);          // NACL_EQ 括弧ありは推定値
+            $table->string('memo');                 // MEMO (独自で追加)
         });
     }
 

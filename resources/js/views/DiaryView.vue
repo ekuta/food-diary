@@ -8,7 +8,7 @@
           <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn icon v-bind="props">
-              <v-icon small>mdi-menu</v-icon>
+              <v-icon>mdi-menu</v-icon>
             </v-btn>
           </template>
           <v-list :items="items" @click:select="onMenuSelect">
@@ -23,30 +23,30 @@
     <v-container>
       <div @click="addDiary('Breakfirst')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon small>mdi-weather-sunset</v-icon>朝食
+          <v-icon>mdi-weather-sunset</v-icon>朝食
           <v-spacer/>
-          <v-icon small>mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-row>
       </div>
       <div @click="addDiary('Lunch')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon small>mdi-white-balance-sunny</v-icon>昼食
+          <v-icon>mdi-white-balance-sunny</v-icon>昼食
           <v-spacer />
-          <v-icon small>mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-row>
       </div>
       <div @click="addDiary('Dinner')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon small>mdi-weather-night</v-icon>夕食
+          <v-icon>mdi-weather-night</v-icon>夕食
           <v-spacer />
-          <v-icon small>mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-row>
       </div>
       <div @click="addDiary('Snack')">
         <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon small>mdi-food-fork-drink</v-icon>間食
+          <v-icon>mdi-food-fork-drink</v-icon>間食
           <v-spacer />
-          <v-icon small>mdi-plus</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-row>
       </div>
     </v-container>
@@ -80,6 +80,11 @@ const items = [
     props: { prependIcon: 'mdi-target' },
   },
   {
+    title: '食品の登録',
+    value: 'food',
+    props: { prependIcon: 'mdi-food' },
+  },
+  {
     title: 'ログアウト',
     value: 'logout',
     props: { prependIcon: 'mdi-logout' },
@@ -93,6 +98,9 @@ const onMenuSelect = async (val) => {
       await logout();
       userStore.logout();
       router.push({ name: 'login'});
+      break;
+    case 'food':
+      router.push({ name: 'food', params: { id:  0 } });
       break;
   }
 }
