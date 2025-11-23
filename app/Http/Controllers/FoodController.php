@@ -12,9 +12,16 @@ class FoodController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function search(Request $request)
     {
-        //
+        $searchString = $request->post('searchString');
+        $words = preg_split('/[\p{Z}\p{Cc}]++/u', $searchString);
+        Log::info("search:", $words);
+        $query = Food::query();
+        foreach ($words as $word) {
+            $query->where('search_string', 'like', "%{$word}%");
+        }                                                                                                                       $foods = $query->limit(config('app.max_search_result'))->get();
+        return $this->responseSuccess($foods);
     }
 
     /**
@@ -25,6 +32,8 @@ class FoodController extends Controller
         Log::info("store", $request->post());
         $params = $request->post();
         $params['user_id'] = Auth::id();
+        $str = trim(implode(' ', [$params['name'], $params['alias_names'], $params['maker']]));
+        $params['search_string'] = str_replace("  ", " ", $str);
         Food::create($params);
         return $this->responseSuccess();
     }

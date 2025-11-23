@@ -32,6 +32,8 @@ Route::prefix('diary')->middleware(['auth:sanctum', 'verified'])->group(function
 });
 
 Route::apiResource('food', FoodController::class)->whereNumber('food')
+    ->except(['index'])->middleware('auth:sanctum');
+Route::post('/food/search', [FoodController::class, 'search'])
     ->middleware('auth:sanctum');
 Route::apiResource('recipe', RecipeController::class)->whereNumber('recipe')
     ->middleware('auth:sanctum');

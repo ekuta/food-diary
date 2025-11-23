@@ -19,11 +19,11 @@ class DiaryController extends Controller
             ->orderBy('meal_type')->orderBy('recipe_id')->orderBy('id')->get();
         $result = [];
         foreach (MealType::cases() as $type) {
-            $result[] = [$type->name => ['calory' => 0, 'foods' => []]];
+            $result[] = [$type->name => ['calory' => 0, 'items' => []]];
         }
         foreach ($foods as $food) {
             $result[$food->meal_type->name]['calory'] += $food->calory;
-            $result[$food->meal_type->name]['foods'][] = $food->toArray();
+            $result[$food->meal_type->name]['items'][] = $food->toArray();
         }
         return $this->responseSuccess($result);
     }

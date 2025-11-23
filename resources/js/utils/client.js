@@ -87,18 +87,23 @@ export const verifyEmail = async (params, query) => {
   }
 }
 
-export const getDiary = async (date = null) => {
-  if (date == null) {
-    const today = new Date();
-    const month = ('0' + (today.getMonth() + 1)).slice(-2);
-    date = today.getFullYear() + month + ('0' + today.getDate()).slice(-2);
-  }
+export const getDiary = async (date) => {
   try {
     const res = await client.get('/diary/' + date);
     console.log("getDiary: ", res);
     return res.data;
   } catch (err) {
     console.log("getDiary error: ", err);
+  }
+}
+
+export const searchFood = async (searchString) => {
+  try {
+    const res = await client.post('/food/search', { searchString: searchString });
+    console.log("searchFood: ", res);
+    return res.data;
+  } catch (err) {
+    console.log("searchFood error: ", err);
   }
 }
 

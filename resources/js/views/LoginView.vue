@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-card max-width="500" class="mx-auto">
+  <v-container max-width="640">
+    <v-card class="mx-auto">
       <v-card-title class="text-center">
         {{ route.name == 'login' ? 'ログイン' : 'メール確認' }}
       </v-card-title>
@@ -15,7 +15,7 @@
           <v-form ref="loginForm" :disabled="userStore.isLogin()">
             <v-text-field
               v-model="form.email"
-              prepend-icon="mdi-account-circle"
+              :prepend-icon="mdiAccountCircle"
               :rules="[rules.required, rules.email]"
               label="メールアドレス"
               type="email"
@@ -23,11 +23,11 @@
             </v-text-field>
             <v-text-field
               v-model="form.password"
-              prepend-icon="mdi-lock"
+              :prepend-icon="mdiLock"
               :rules="[rules.required, rules.min8]"
               label="パスワード"
               :type="showPassword ? 'text' : 'password'"
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showPassword ? mdiEye : mdiEyeOff"
               @click:append-inner="showPassword = !showPassword"
               >
             </v-text-field>
@@ -62,7 +62,7 @@
         <v-card-text v-if="verifyStatus == 'success'" class="bg-blue-lighten-5 pt-4">
           メールアドレスの確認が完了しました。
           <div class="d-flex justify-space-between ml-10">
-            <v-btn to="/diary" color="primary" variant="tonal">
+            <v-btn to="/" color="primary" variant="tonal">
               食事記録に移動
             </v-btn>
           </div>
@@ -73,14 +73,16 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'vue-router';
+import router from '@/router';
+import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { login, sendEmailVerification, verifyEmail } from '@/utils/client';
 import { useUserStore } from '@/stores/user';
 import { useStateStore } from '@/stores/state';
+import { formatDate } from '@/utils';
+import { mdiAccountCircle, mdiLock, mdiEye, mdiEyeOff } from '@mdi/js';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
 
-const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 const stateStore = useStateStore();
@@ -117,7 +119,7 @@ const onSubmit = async () => {
         await sendVerifyEmail();
       }
     } else {
-      router.push({ name: 'diary' });
+      router.push({ name: 'diary', params: { date: formatDate() } });
     }
   } else if (res?.message) {
     errorMessage.value = res.message;

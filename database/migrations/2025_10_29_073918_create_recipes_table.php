@@ -13,8 +13,15 @@ return new class extends Migration
     {
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id')->index();
             $table->string('name');
             $table->decimal('servings', 5, 1);
+            $table->decimal('total_weight', 5, 1);
+            $table->unsignedSmallInteger('calory');
+            $table->decimal('protein', 6, 1);
+            $table->decimal('fat', 6, 1);
+            $table->decimal('carbs', 6, 1);
+            $table->decimal('salt', 6, 2);
             $table->timestamps();
         });
     }

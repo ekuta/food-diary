@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-card max-width="500" class="mx-auto">
+  <v-container max-width="640">
+    <v-card class="mx-auto">
       <v-card-title class="text-center">
         新規ユーザ登録
       </v-card-title>
@@ -12,7 +12,7 @@
           <v-form ref="loginForm" :disabled="verifingEmail">
             <v-text-field
               v-model="form.name"
-              prepend-icon="mdi-account-circle"
+              :prepend-icon="mdiAccountCircle"
               :rules="[rules.required]"
               label="ニックネーム"
               name="name"
@@ -20,27 +20,27 @@
             />
             <v-text-field
               v-model="form.email"
-              prepend-icon="mdi-mail"
+              :prepend-icon="mdiMail"
               :rules="[rules.required, rules.email]"
               label="メールアドレス"
               type="email"
             />
             <v-text-field
               v-model="form.password"
-              prepend-icon="mdi-lock"
+              :prepend-icon="mdiLock"
               :rules="[rules.required, rules.min8]"
               label="パスワード"
               :type="showPassword ? 'text' : 'password'"
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showPassword ? mdiEye : mdiEyeOff"
               @click:append-inner="showPassword = !showPassword"
             />
             <v-text-field
               v-model="form.password_confirmation"
-              prepend-icon="mdi-lock"
+              :prepend-icon="mdiLock"
               :rules="[rules.required, rules.same]"
               label="パスワード確認"
               :type="showPassword ? 'text' : 'password'"
-              :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-inner-icon="showPassword ? mdiEye : mdiEyeOff"
               @click:append-inner="showPassword = !showPassword"
             />
             <div class="d-flex justify-space-between ml-10">
@@ -57,7 +57,7 @@
       <v-card-text v-if="verifingEmail" class="bg-blue-lighten-5 pt-4">
         確認メールを送付しました。受信したメールからメールアドレスを確認した後に先に進んでください。
         <div class="d-flex justify-space-between ml-10">
-          <v-btn color="primary" variant="tonal" @click="router.push({ name: 'diary'});">
+          <v-btn to="/" color="primary" variant="tonal">
             先に進む
           </v-btn>
           <v-btn color="primary" variant="tonal" @click="resendEmail()" :disable="resending">
@@ -74,6 +74,7 @@ import router from '@/router';
 import { ref } from 'vue';
 import { register, sendEmailVerification } from '@/utils/client';
 import { useUserStore } from '@/stores/user';
+import { mdiAccountCircle, mdiLock, mdiEye, mdiEyeOff, mdiMail } from '@mdi/js';
 
 const userStore = useUserStore();
 

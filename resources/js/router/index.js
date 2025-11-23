@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from '@/stores/user';
+import { formatDate } from '@/utils';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', redirect: '/diary' },
+    {
+      path: '/',
+      redirect: { name: 'diary', params: { date: formatDate() } },
+    },
     {
       path: "/login",
       name: "login",
@@ -21,15 +25,34 @@ const router = createRouter({
       component: () => import("../views/LoginView.vue"),
     },
     {
-      path: "/diary",
+      path: "/diary/:date",
       name: "diary",
       component: () => import("../views/DiaryView.vue"),
     },
-    { path: '/food', redirect: '/food/0' },
     {
-      path: "/food/:id",
-      name: "food",
-      component: () => import("../views/FoodView.vue"),
+      path: "/edit-diary/:date/:mealType",
+      name: "edit diary",
+      component: () => import("../views/EditDiaryView.vue"),
+    },
+    {
+      path: "/select-food",
+      name: "select food",
+      component: () => import("../views/SelectFoodView.vue"),
+    },
+    {
+      path: "/select-recipe/:date/:mealType",
+      name: "select recipe",
+      component: () => import("../views/SelectRecipeView.vue"),
+    },
+    {
+      path: "/edit-recipe/:date/:mealType",
+      name: "edit recipe",
+      component: () => import("../views/EditRecipeView.vue"),
+    },
+    {
+      path: "/register-food/:id",
+      name: "register-food",
+      component: () => import("../views/RegisterFoodView.vue"),
     },
     {
       path: "/mext-food",
@@ -42,7 +65,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
   if ((to.name == 'login' || to.name == 'register') && userStore.isLogin()) {
-    next({ name: 'diary' });
+    next({ name: 'diary', params: { date: formatDate() } });
   } else {
     next();
   }

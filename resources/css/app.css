@@ -10,7 +10,7 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-.v-number-input.compact-input *,.v-select.compact-input * {
+.v-number-input.compact-input *,.v-select.compact-input *, .v-text-field.compact-input * {
   --v-input-control-height: 30px;
   --v-input-padding-top: 3px;
   --v-field-input-padding-bottom: 3px;
@@ -21,4 +21,8 @@
 
 .centered-input .v-field__input {
     text-align: center;
+}
+
+html {
+    touch-action: manipulation;
 }

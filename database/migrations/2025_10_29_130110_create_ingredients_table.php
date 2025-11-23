@@ -13,9 +13,17 @@ return new class extends Migration
     {
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id')->index();
             $table->integer('recipe_id');
             $table->integer('food_id');
+            $table->string('name');
             $table->decimal('amount', 6, 2);
+            $table->unsignedTinyInteger('unit');
+            $table->decimal('calory', 6, 1);
+            $table->decimal('protein', 6, 2);
+            $table->decimal('fat', 6, 2);
+            $table->decimal('carbs', 6, 2);
+            $table->decimal('salt', 6, 3);
         });
     }
 

@@ -3,7 +3,8 @@ import { ref } from 'vue';
 
 export const useStateStore = defineStore('state', () => {
   const loading = ref(false);
+  const diary = ref(null);
   const mextFood = ref(null);
-  return { loading, mextFood };
-});
-
+  const selectFood = ref(null);
+  return { loading, diary, mextFood, selectFood };
+}, {persist: true});

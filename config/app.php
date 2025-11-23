@@ -3,6 +3,7 @@
 return [
 
     'eruda' => env('ERUDA_ENABLED', false),
+    'max_search_result' => env('MAX_SEARCH_RESULT', 100),
 
     /*
     |--------------------------------------------------------------------------

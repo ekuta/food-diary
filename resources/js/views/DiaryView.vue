@@ -1,6 +1,6 @@
 <template>
   <v-app-bar color="primary" density="compact">
-    <v-container>
+    <v-container max-width="960">
       <v-app-bar-title>
         <div class="d-flex align-center">
           Application Bar
@@ -20,43 +20,38 @@
   </v-app-bar>
 
   <v-main>
-    <v-container>
-      <div @click="addDiary('Breakfirst')">
-        <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon :icon="mdiWeatherSunset"/>朝食
-          <v-spacer/>
-          <v-icon :icon="mdiPlus" />
-        </v-row>
-      </div>
-      <div @click="addDiary('Lunch')">
-        <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon :icon="mdiWhiteBalanceSunny" />昼食
-          <v-spacer />
-          <v-icon :icon="mdiPlus" />
-        </v-row>
-      </div>
-      <div @click="addDiary('Dinner')">
-        <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon :icon="mdiWeatherNight" />夕食
-          <v-spacer />
-          <v-icon :icon="mdiPlus" />
-        </v-row>
-      </div>
-      <div @click="addDiary('Snack')">
-        <v-row class="border-t-lg pt-2 pb-2" no-gutters>
-          <v-icon :icon="mdiFoodForkDrink" />間食
-          <v-spacer />
-          <v-icon :icon="mdiPlus" />
-        </v-row>
-      </div>
+    <v-container max-width="960">
+      <v-row class="border-t-lg pt-2 pb-2" no-gutters>
+        <v-icon :icon="mdiWeatherSunset"/>朝食
+        <v-spacer/>
+        <v-btn color="primary" :prepend-icon="mdiNotebookPlusOutline" variant="tonal"
+          @click="addRecipe('Breakfirst')">レシピ追加</v-btn>
+        <v-btn color="primary" :prepend-icon="mdiFood" variant="tonal" class="mx-1"
+          @click="addFood('Breakfirst')">食品追加</v-btn>
+      </v-row>
+      <v-row class="border-t-lg pt-2 pb-2" no-gutters>
+        <v-icon :icon="mdiWhiteBalanceSunny" />昼食
+        <v-spacer />
+        <v-icon :icon="mdiPlus" />
+      </v-row>
+      <v-row class="border-t-lg pt-2 pb-2" no-gutters>
+        <v-icon :icon="mdiWeatherNight" />夕食
+        <v-spacer />
+        <v-icon :icon="mdiPlus" />
+      </v-row>
+      <v-row class="border-t-lg pt-2 pb-2" no-gutters>
+        <v-icon :icon="mdiFoodForkDrink" />間食
+        <v-spacer />
+        <v-icon :icon="mdiPlus" />
+      </v-row>
     </v-container>
   </v-main>
   <v-footer app height="30px" class="bg-blue-lighten-5">
-    <v-container class="position-relative">
+    <v-container max-width="960" class="position-relative">
   Footer
     <v-fab
       class="tw:-top-12 tw:right-3 position-absolute"
-      icon="mdi-plus"
+      :icon="mdiPlus"
     ></v-fab>
     </v-container>
   </v-footer>
@@ -65,14 +60,18 @@
 
 <script setup>
 import router from '@/router';
+import { useRoute } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+import { useStateStore } from '@/stores/state';
 import { ref, onMounted } from 'vue';
 import { logout, getDiary } from '@/utils/client';
-import { useUserStore } from '@/stores/user';
-import { mdiMenu, mdiWeatherSunset, mdiPlus, mdiWhiteBalanceSunny, mdiWeatherNight, mdiFoodForkDrink, mdiTarget, mdiFood, mdiLogout } from '@mdi/js';
+import { getDate, formatDate, getMealTypeName } from '@/utils';
+import { mdiMenu, mdiWeatherSunset, mdiPlus, mdiWhiteBalanceSunny, mdiWeatherNight, mdiFoodForkDrink, mdiTarget,
+  mdiFood, mdiLogout, mdiNotebookPlusOutline } from '@mdi/js';
 
+const route = useRoute();
 const userStore = useUserStore();
-
-const diaries = ref(null);
+const stateStore = useStateStore();
 
 const items = [
   {
@@ -101,13 +100,28 @@ const onMenuSelect = async (val) => {
       router.push({ name: 'login'});
       break;
     case 'food':
-      router.push({ name: 'food', params: { id:  0 } });
+      router.push({ name: 'register-food', params: { id:  0 } });
       break;
   }
 }
 
+const addRecipe = (mealType) => {
+  router.push({ name: 'select recipe', params: { date: route.params.date, mealType: mealType } });
+}
+
+const addFood = (mealType) => {
+  stateStore.selectFood = {
+    title: formatDate(getDate(route.params.date), 'm月d日(w) ') + getMealTypeName(mealType) + 'の追加',
+    date: route.params.date,
+    mealType: mealType,
+    recipe_id: 0,
+    items: [],
+  };
+  router.push({ name: 'edit diary', params: { date: route.params.date, mealType: mealType } });
+}
+
 onMounted(async () => {
-  diaries.value = await getDiary();
+  stateStore.diary = await getDiary(route.params.date);
 });
 
 </script>

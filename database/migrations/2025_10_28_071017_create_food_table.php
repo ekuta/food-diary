@@ -16,8 +16,9 @@ return new class extends Migration
             $table->integer('user_id')->index();
             $table->string('name');
             $table->string('alias_names')->nullable();
-            $table->unsignedTinyInteger('food_type')->comment('1: ingredient, 2: products, 3: sets');
-            $table->unsignedTinyInteger('food_unit')->comment('1: gram, 2: ml, 3: serving');
+            $table->unsignedTinyInteger('food_type')->comment('1: products, 2: menu, 3: others');
+            $table->string('maker')->nullable();
+            $table->string('food_unit')->comment('g, ml, 単位');
             $table->unsignedSmallInteger('food_amount');
             $table->unsignedSmallInteger('calory');
             $table->decimal('protein', 6, 1)->nullable();
@@ -27,10 +28,11 @@ return new class extends Migration
             $table->unsignedTinyInteger('usage_type')
                 ->comment('bitwise flags: 1: weight, 2: spoon, 4: volume, 8: package');
             $table->decimal('gram_per_food_unit', 6, 1)->nullable();
-            $table->decimal('gram_per_tablespoon', 6, 1)->nullable();
+            $table->decimal('amount_per_tablespoon', 6, 1)->nullable();
             $table->decimal('ml_per_food_unit', 6, 1)->nullable();
             $table->decimal('amount_per_package', 6, 1)->nullable();
-            $table->string('package_name');
+            $table->string('package_unit');
+            $table->string('search_string');
             $table->timestamps();
         });
     }
