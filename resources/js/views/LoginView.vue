@@ -13,19 +13,13 @@
       <v-card-actions>
         <v-col>
           <v-form ref="loginForm" :disabled="userStore.isLogin()">
-            <v-text-field
-              v-model="form.email"
-              :prepend-icon="mdiAccountCircle"
-              :rules="[rules.required, rules.email]"
-              label="メールアドレス"
-              type="email"
+            <v-text-field v-model="form.email" label="メールアドレス" maxlength="100"
+              :prepend-icon="mdiAccountCircle" :rules="[rules.required, rules.email]" type="email"
               >
             </v-text-field>
-            <v-text-field
-              v-model="form.password"
+            <v-text-field v-model="form.password" label="パスワード" maxlength="100"
               :prepend-icon="mdiLock"
               :rules="[rules.required, rules.min8]"
-              label="パスワード"
               :type="showPassword ? 'text' : 'password'"
               :append-inner-icon="showPassword ? mdiEye : mdiEyeOff"
               @click:append-inner="showPassword = !showPassword"

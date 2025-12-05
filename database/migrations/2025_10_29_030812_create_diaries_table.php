@@ -18,15 +18,16 @@ return new class extends Migration
             $table->unsignedTinyInteger('meal_type')->comment('1: breakfirst, 2: lunch, 3: dinner, 4: snack');
             $table->integer('recipe_id');
             $table->integer('food_id')->comment('0: recipe, max int: temporary food');
-            $table->decimal('servings', 6, 1)->comment('for recipie');
+            $table->decimal('servings', 6, 1)->nullable()->comment('for recipie');
             $table->string('name');
             $table->decimal('amount', 6, 2);
-            $table->unsignedTinyInteger('unit');
+            $table->string('unit');
             $table->decimal('calory', 6, 1);
             $table->decimal('protein', 6, 2);
             $table->decimal('fat', 6, 2);
             $table->decimal('carbs', 6, 2);
             $table->decimal('salt', 6, 3);
+            $table->timestamps();
         });
     }
 

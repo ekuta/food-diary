@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\User;
 
@@ -32,6 +33,7 @@ class UserController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             $user = Auth::user();
+            Auth::logoutOtherDevices($credentials['password']);
             return $this->responseSuccess($user);
         } else {
             return $this->responseFailure("メールアドレスまたはパスワードが正しくありません。");

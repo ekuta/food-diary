@@ -23,6 +23,14 @@
     text-align: center;
 }
 
+.v-list-item-subtitle {
+  line-height: 1.2rem !important;
+}
+
+.v-btn {
+    text-transform: none !important;
+}
+
 html {
     touch-action: manipulation;
 }

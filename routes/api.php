@@ -7,7 +7,7 @@ use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiaryController;
 use App\Http\Controllers\FoodController;
-use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\RegularController;
 use App\Http\Controllers\MextFoodController;
 
 Route::post('/register', [UserController::class, 'register'])->middleware(['throttle:6,1']);
@@ -26,19 +26,19 @@ Route::prefix('user')->group(function () {
     })->middleware('auth:sanctum');
 });
 
-Route::prefix('diary')->middleware(['auth:sanctum', 'verified'])->group(function () {
-    Route::get('/{date}', [DiaryController::class, 'index'])->where('date', '[0-9]{8}');
-    Route::put('/{date}', [DiaryController::class, 'store'])->where('date', '[0-9]{8}');
-});
+Route::apiResource('diary', DiaryController::class)->whereNumber('diary')
+    ->middleware('auth:sanctum');
+Route::get('/diary/history', [DiaryController::class, 'history'])
+    ->middleware('auth:sanctum');
 
 Route::apiResource('food', FoodController::class)->whereNumber('food')
     ->except(['index'])->middleware('auth:sanctum');
-Route::post('/food/search', [FoodController::class, 'search'])
+Route::put('/food/search', [FoodController::class, 'search'])
     ->middleware('auth:sanctum');
-Route::apiResource('recipe', RecipeController::class)->whereNumber('recipe')
+Route::apiResource('recipe', RegularController::class)->whereNumber('recipe')
     ->middleware('auth:sanctum');
 
-Route::post('/mext-food/search', [MextFoodController::class, 'search'])
+Route::put('/mext-food/search', [MextFoodController::class, 'search'])
     ->middleware('auth:sanctum');
 Route::get('/mext-food/{id}', [MextFoodController::class, 'show'])
     ->whereNumber('id')->middleware('auth:sanctum');

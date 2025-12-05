@@ -30,29 +30,29 @@ const router = createRouter({
       component: () => import("../views/DiaryView.vue"),
     },
     {
-      path: "/edit-diary/:date/:mealType",
-      name: "edit diary",
-      component: () => import("../views/EditDiaryView.vue"),
-    },
-    {
       path: "/select-food",
       name: "select food",
       component: () => import("../views/SelectFoodView.vue"),
     },
     {
-      path: "/select-recipe/:date/:mealType",
+      path: "/select-recipe/:date/:meal_type",
       name: "select recipe",
       component: () => import("../views/SelectRecipeView.vue"),
     },
     {
-      path: "/edit-recipe/:date/:mealType",
+      path: "/edit-recipe",
       name: "edit recipe",
       component: () => import("../views/EditRecipeView.vue"),
     },
     {
-      path: "/register-food/:id",
-      name: "register-food",
-      component: () => import("../views/RegisterFoodView.vue"),
+      path: "/food",
+      name: "food",
+      component: () => import("../views/FoodView.vue"),
+    },
+    {
+      path: "/edit-food/:id",
+      name: "edit food",
+      component: () => import("../views/EditFoodView.vue"),
     },
     {
       path: "/mext-food",
@@ -64,12 +64,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  if ((to.name == 'login' || to.name == 'register') && userStore.isLogin()) {
+  if (userStore.isLogin() && (to.name == 'login' || to.name == 'register')) {
     next({ name: 'diary', params: { date: formatDate() } });
   } else {
     next();
   }
 });
-
 
 export default router;

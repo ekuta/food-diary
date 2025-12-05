@@ -14,9 +14,25 @@ class Diary extends Model
 
     protected $hidden = [
         'user_id',
+        'date',
+        'meal_type',
+        'recipe_id',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
+        'id' => 'integer',
         'meal_type' => MealType::class,
+        'user_id' => 'integer',
+        'recipe_id' => 'integer',
+        'food_id' => 'integer',
+        'servings' => 'float',
+        'amount' => 'float',
+        'calory' => 'float',
+        'protein' => 'float',
+        'fat' => 'float',
+        'carbs' => 'float',
+        'salt' => 'float',
     ];
 }

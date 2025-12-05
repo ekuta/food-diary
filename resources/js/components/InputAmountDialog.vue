@@ -3,16 +3,17 @@
       <v-card color="grey-darken-4">
         <v-card-title class="d-flex align-center justify-space-between pt-0 pb-0">
           <v-btn :icon="mdiWindowClose" variant="text" @click="onClose(false)"></v-btn>
-          分量
-          <v-btn text="登録" color="grey-darken-4" variant="flat" @click="onClose(true)"></v-btn>
+          使用分量
+          <v-btn text="完了" color="grey-darken-4" variant="flat" @click="onClose(true)"></v-btn>
         </v-card-title>
         <v-card-text class="pt-2" style="background-color: #424242">
-        <v-row v-if="dialog.units.length != 1">
+        <v-row v-if="dialog.units?.length != 1">
           <v-col>
-            <v-btn-toggle v-model="dialog.unit">
+            <v-btn-toggle v-model="dialog.unit" mandatory>
               <v-btn v-for="name in dialog.units" :key="name" :value="name" :min-width="80"
                 rounded="xl" class="mx-1 mt-2 mb-2" variant="flat" base-color="grey-darken-2" color="grey"
-                style="text-transform: none">
+                style="text-transform: none"
+                >
                 {{ name }}
               </v-btn>
            </v-btn-toggle>
@@ -21,17 +22,12 @@
         <v-row no-gutters>
           <v-col>
             <v-sheet color="grey-darken-2" height="42" class="d-flex justify-center align-center">
-              {{dialog.food.name}}
+              {{dialog.name}}
             </v-sheet>
           </v-col>
           <v-col>
             <v-sheet color="grey-darken-2" height="42" class="d-flex justify-center align-center">
-              <template v-if="dialog.unit == '大さじ' || dialog.unit == '小さじ'">
-                {{ dialog.unit }} {{ dialog.amount }}
-              </template>
-              <template v-else>
-                {{ dialog.amount }} {{ dialog.unit }}
-              </template>
+              {{ unitAmountString(dialog) }}
             </v-sheet>
           </v-col>
         </v-row>
@@ -103,13 +99,16 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { getUnits } from '@/utils/food';
+import { getUnits, unitAmountString } from '@/utils/food';
 import { mdiWindowClose, mdiBackspaceOutline } from '@mdi/js';
 const dialog = defineModel();
 const emit = defineEmits(['close']);
 
-
 const onClick = (key) => {
+  if (dialog.value.first) {
+    dialog.value.amount = '';
+    dialog.value.first = false;
+  }
   const amount = dialog.value.amount;
   if (key == 'del') {
     dialog.value.amount = amount.slice(0, -1);

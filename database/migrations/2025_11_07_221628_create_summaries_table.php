@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('fat', 6, 1);
             $table->decimal('carbs', 6, 1);
             $table->decimal('salt', 6, 2);
+            $table->timestamps();
         });
     }
 

@@ -10,35 +10,27 @@
       <v-card-actions>
         <v-col>
           <v-form ref="loginForm" :disabled="verifingEmail">
-            <v-text-field
-              v-model="form.name"
+            <v-text-field v-model="form.name" label="ニックネーム" maxlength="100"
               :prepend-icon="mdiAccountCircle"
               :rules="[rules.required]"
-              label="ニックネーム"
               name="name"
               type="text"
             />
-            <v-text-field
-              v-model="form.email"
+            <v-text-field v-model="form.email" label="メールアドレス" maxlength="100"
               :prepend-icon="mdiMail"
               :rules="[rules.required, rules.email]"
-              label="メールアドレス"
               type="email"
             />
-            <v-text-field
-              v-model="form.password"
+            <v-text-field v-model="form.password" label="パスワード" maxlength="100"
               :prepend-icon="mdiLock"
               :rules="[rules.required, rules.min8]"
-              label="パスワード"
               :type="showPassword ? 'text' : 'password'"
               :append-inner-icon="showPassword ? mdiEye : mdiEyeOff"
               @click:append-inner="showPassword = !showPassword"
             />
-            <v-text-field
-              v-model="form.password_confirmation"
+            <v-text-field v-model="form.password_confirmation" label="パスワード確認" maxlength="100"
               :prepend-icon="mdiLock"
               :rules="[rules.required, rules.same]"
-              label="パスワード確認"
               :type="showPassword ? 'text' : 'password'"
               :append-inner-icon="showPassword ? mdiEye : mdiEyeOff"
               @click:append-inner="showPassword = !showPassword"

@@ -17,36 +17,40 @@
         <v-card variant="elevated">
           <div class="d-flex">
             <v-card-title class="text-subtitle-1 pt-1 px-4">基本情報</v-card-title>
-            <v-btn color="secondary lighten-2" variant="elevated" density="comfortable" @click="router.push({ name: 'mext-food'});">
+            <v-btn v-if="form.id == 0" color="secondary lighten-2" variant="elevated" density="comfortable" @click="router.push({ name: 'mext-food'});">
               栄養成分データベースを検索
             </v-btn>
           </div>
           <v-card-text class="px-2 pt-0 pb-1">
             <v-row dense>
-              <v-col><v-text-field v-model="form.name" label="食品の名称" density="compact"
-                :rules="[rules.required]"
-                hide-details="auto"
-                >
+              <v-col>
+                <v-text-field v-model="form.name" label="食品の名称" maxlength="100" density="compact"
+                  hide-details="auto" :rules="[rules.required]"
+                  >
               </v-text-field></v-col>
             </v-row>
             <v-row dense>
               <v-col>
-                <v-text-field v-model="form.alias_names" label="検索キーワード(ひらがな/別名など)" density="compact" hide-details="auto" />
+                <v-text-field v-model="form.alias_names" label="検索キーワード(ひらがな/別名など)" maxlength="100"
+                  density="compact" hide-details="auto" />
               </v-col>
             </v-row>
             <v-row no-gutters>
               <v-col>
                 <v-radio-group v-model="form.food_type" hide-details="auto" density="compact" inline class="pt-2">
                   <v-label>食品区分：</v-label>
-                  <v-radio label="市販品" value="1"></v-radio>
-                  <v-radio label="外食" value="2"></v-radio>
-                  <v-radio label="その他の食品" value="3"></v-radio>
+                  <v-radio label="市販品" :value="1"></v-radio>
+                  <v-radio label="外食" :value="2"></v-radio>
+                  <v-radio label="その他の食品" :value="3"></v-radio>
                 </v-radio-group>
               </v-col>
             </v-row>
-            <v-row v-show="form.food_type != '3'" no-gutters>
+            <v-row v-show="form.food_type != 3" no-gutters>
               <v-col>
-                <v-text-field v-model="form.maker" label="販売者/製造者/店名など" density="compact" hide-details="auto" />
+                <v-text-field v-model="form.maker" label="販売者/製造者/店名など" density="compact" maxlength="50"
+                  hide-details="auto"
+                  >
+                </v-text-field>
               </v-col>
             </v-row>
           </v-card-text>
@@ -65,8 +69,10 @@
                 <v-radio value="g"></v-radio>
                 <div class="d-flex" @click="enableIfdisabled('g')">
                   <div class="tw:w-16 pr-1">
-                    <v-number-input v-model="gram_amount" control-variant="hidden" density="compact" hide-details="auto"
-                      :disabled="form.food_unit != 'g'" class="compact-input"></v-number-input
+                    <v-number-input v-model="gram_amount" :max="99999" control-variant="hidden" density="compact"
+                      hide-details="auto" :disabled="form.food_unit != 'g'" class="compact-input"
+                      >
+                    </v-number-input
                       >
                   </div>
                   gあたり
@@ -74,7 +80,8 @@
                 <v-radio value="ml"></v-radio>
                 <div class="d-flex" @click="enableIfdisabled('ml')">
                   <div class="tw:w-16 pr-1">
-                    <v-number-input v-model="ml_amount" control-variant="hidden" density="compact" hide-details="auto"
+                    <v-number-input v-model="ml_amount" :max="99999" control-variant="hidden" density="compact"
+                      hide-details="auto"
                       :disabled="form.food_unit != 'ml'" class="compact-input"
                       >
                     </v-number-input>
@@ -87,34 +94,36 @@
           </v-row>
           <v-row dense>
             <v-col>
-              <v-number-input v-model="form.calory" label="エネルギー" class="centered-input" density="compact"
-                hide-details suffix="kcal" control-variant="hidden" @blur="validate('calory_salt')"
+              <v-number-input v-model="form.calory" label="エネルギー" :max="99999" density="compact" hide-details
+                suffix="kcal" control-variant="hidden" :precision="1" class="centered-input"
+                @blur="validate('calory_salt')"
                 >
               </v-number-input>
             </v-col>
             <v-col>
-              <v-number-input v-model="form.protein" label="たんぱく質" class="centered-input" density="compact"
-                hide-details="auto" suffix="g" control-variant="hidden" :precision="1"
+              <v-number-input v-model="form.protein" label="たんぱく質" :max="99999" density="compact"
+                hide-details="auto" suffix="g" control-variant="hidden" :precision="1" class="centered-input"
                 >
               </v-number-input>
             </v-col>
             <v-col>
-              <v-number-input v-model="form.fat" label="脂質" class="centered-input" density="compact"
-                hide-details="auto" suffix="g" control-variant="hidden" :precision="1"
+              <v-number-input v-model="form.fat" label="脂質" :max="99999" density="compact" hide-details
+                suffix="g" control-variant="hidden" :precision="1" class="centered-input"
                 >
               </v-number-input>
             </v-col>
           </v-row>
           <v-row dense>
             <v-col>
-              <v-number-input v-model="form.carbs" label="炭水化物" class="centered-input" density="compact"
-                hide-details="auto" suffix="g" control-variant="hidden" :precision="1"
+              <v-number-input v-model="form.carbs" label="炭水化物" :max="99999" class="centered-input"
+                density="compact" hide-details suffix="g" control-variant="hidden" :precision="1"
                 >
               </v-number-input>
             </v-col>
             <v-col>
-              <v-number-input v-model="form.salt" label="食塩相当量" class="centered-input" density="compact"
-                hide-details="auto" suffix="g" control-variant="hidden" :precision="2" @blur="validate('calory_salt')"
+              <v-number-input v-model="form.salt" label="食塩相当量" :max="99999" class="centered-input"
+                density="compact" hide-details="auto" suffix="g" control-variant="hidden" :precision="2"
+                @blur="validate('calory_salt')"
                 >
               </v-number-input>
             </v-col>
@@ -138,8 +147,8 @@
                 <div class="d-flex pt-2 text-body-1">
                   {{ form.food_unit == 'ml' ? ml_amount + 'ml' : '1単位' }}あたり：
                   <div class="tw:w-14 pr-1">
-                    <v-number-input v-model="form.gram_per_food_unit" control-variant="hidden" density="compact"
-                      hide-details class="compact-input" @blur="validate('use_weight')"
+                    <v-number-input v-model="form.gram_per_food_unit" :max="99999" control-variant="hidden"
+                      density="compact" hide-details class="compact-input" @blur="validate('use_weight')"
                       >
                     </v-number-input>
                   </div>
@@ -158,8 +167,8 @@
                 <div class="d-flex pt-2 text-body-1">
                   大さじ1あたり：
                   <div class="tw:w-14 pr-1 mt-n1">
-                    <v-number-input v-model="form.amount_per_tablespoon" control-variant="hidden" density="compact"
-                      hide-details class="compact-input" @blur="validate('use_spoon')"
+                    <v-number-input v-model="form.amount_per_tablespoon" :max="99999" control-variant="hidden"
+                      density="compact" hide-details class="compact-input" @blur="validate('use_spoon')"
                       >
                     </v-number-input>
                   </div>
@@ -178,8 +187,8 @@
                 <div class="d-flex pt-2 text-body-1">
                   {{ form.food_unit == 'g' ? gram_amount + 'g' : '1単位' }}あたり：
                   <div class="tw:w-14 pr-1 mt-n1">
-                    <v-number-input v-model="form.ml_per_food_unit" control-variant="hidden" density="compact"
-                      hide-details class="compact-input" @blur="validate('use_volume')"
+                    <v-number-input v-model="form.ml_per_food_unit" :max="99999" control-variant="hidden"
+                      density="compact" hide-details class="compact-input" @blur="validate('use_volume')"
                       >
                     </v-number-input>
                   </div>
@@ -199,9 +208,10 @@
                   <div class="d-flex pt-2 text-body-1">
                     名称：
                     <div class="tw:w-30 pr-1 mt-n1">
-                      <v-text-field v-model="form.package_unit" control-variant="hidden" density="compact"
-                        hide-details class="compact-input" @blur="validate('package_unit')"
-                      ></v-text-field>
+                      <v-text-field v-model="form.package_unit" maxlength="10" control-variant="hidden"
+                        density="compact" hide-details class="compact-input" @blur="validate('package_unit')"
+                        >
+                      </v-text-field>
                     </div>
                     <div class="tw:w-10 mt-n1">
                       <v-select v-model="selected_name" :items="package_units" density="compact" hide-details :menu-props="{ 'max-height': 600 }"
@@ -218,8 +228,8 @@
                   <div class="d-flex pt-2 text-body-1 pb-2">
                     1{{ form.package_unit }}あたり
                     <div class="tw:w-14 pr-1 mt-n1">
-                      <v-number-input v-model="form.amount_per_package" control-variant="hidden" density="compact"
-                        hide-details class="compact-input" @blur="validate('use_package')"
+                      <v-number-input v-model="form.amount_per_package" :max="99999" control-variant="hidden"
+                        density="compact" hide-details class="compact-input" @blur="validate('use_package')"
                       ></v-number-input>
                     </div>
                     {{ form.food_unit }}
@@ -248,7 +258,7 @@ import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useStateStore } from '@/stores/state';
-import { storeFood } from '@/utils/client';
+import { getFood, storeFood, updateFood } from '@/utils/client';
 import { mdiWindowClose } from '@mdi/js';
 
 const route = useRoute();
@@ -259,7 +269,7 @@ const stateStore = useStateStore();
 const form = ref({
   name: '',
   alias_names: '',
-  food_type: '1',
+  food_type: 1,
   maker: null,
   food_unit: 'g',
   calory: null,
@@ -368,15 +378,16 @@ const onSubmit = async () => {
   let food = Object.assign({}, form.value);
   console.log("food", food);
   food.food_amount = food.food_unit == 'g' ? gram_amount.value : (food.food_unit == 'ml' ? ml_amount.value : 1);
-  if (food.food_type == '3') food.maker = null;
+  if (food.food_type == 3) food.maker = null;
   food.usage_type = +use_weight.value + (+use_spoon.value << 1) + (+use_volume.value << 2) + (+use_package.value << 3);
   if (use_spoon.value && !use_volume.value && food.food_unit != 'ml') {
     if (food.food_unit == 'g') {
-      food.ml_per_food_unit = food.food_amount * food.amount_per_tablespoon / 15;
+      food.ml_per_food_unit = 15 * food.food_amount / food.amount_per_tablespoon;
     }
   }
   if (route.params.id != '0') {
-    console.log('?? call storeFood');
+    const res = await updateFood(food);
+    router.go(-1);
   } else {
     const res = await storeFood(food);
     router.go(-1);
@@ -384,17 +395,36 @@ const onSubmit = async () => {
 }
 
 onMounted(async () => {
-  if (stateStore.mextFood) {
-    form.value.name = stateStore.mextFood.name;
-    form.value.calory = stateStore.mextFood.calory;
-    form.value.protein = stateStore.mextFood.protein;
-    form.value.fat = stateStore.mextFood.fat;
-    form.value.carbs = stateStore.mextFood.carbs;
-    form.value.salt = stateStore.mextFood.salt;
-    form.value.food_type = '3';
-    form.value.food_unit = 'g';
-    gram_amount.value = 100;
-    stateStore.mextFood = null;
+  if (route.params.id != '0') {
+    const result = await getFood(route.params.id);
+    const food = result.data;
+    form.value = food;
+    if (food.usage_type & 0x1) {
+      use_weight.value = true;
+    }
+    if (food.usage_type & 0x2) {
+      use_spoon.value = true;
+    }
+    if (food.usage_type & 0x4) {
+      use_volume.value = true;
+    }
+    if (food.usage_type & 0x8) {
+      use_package.value = true;
+    }
+  } else {
+    form.value.id = 0;
+    if (stateStore.mextFood) {
+      form.value.name = stateStore.mextFood.name;
+      form.value.calory = stateStore.mextFood.calory;
+      form.value.protein = stateStore.mextFood.protein;
+      form.value.fat = stateStore.mextFood.fat;
+      form.value.carbs = stateStore.mextFood.carbs;
+      form.value.salt = stateStore.mextFood.salt;
+      form.value.food_type = 3;
+      form.value.food_unit = 'g';
+      gram_amount.value = 100;
+    }
   }
+  stateStore.mextFood = null;
 });
 </script>

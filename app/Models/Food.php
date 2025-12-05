@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Enums\FoodType;
+
 class Food extends Model
 {
     protected $guarded = [
@@ -19,8 +21,9 @@ class Food extends Model
     ];
 
     protected $casts = [
+        'id' => 'integer',
         'user_id' => 'integer',
-        'food_type' => 'integer',
+        'food_type' => FoodType::class,
         'food_amount' => 'integer',
         'calory' => 'integer',
         'protein' => 'float',

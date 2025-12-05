@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('recipes', function (Blueprint $table) {
+        Schema::create('regulars', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->index();
             $table->string('name');
-            $table->decimal('servings', 5, 1);
-            $table->decimal('total_weight', 5, 1);
-            $table->unsignedSmallInteger('calory');
+            $table->decimal('servings', 6, 1);
+            $table->decimal('amount', 6, 1);
+            $table->decimal('calory', 6, 1);
             $table->decimal('protein', 6, 1);
             $table->decimal('fat', 6, 1);
             $table->decimal('carbs', 6, 1);

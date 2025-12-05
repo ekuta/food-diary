@@ -4,6 +4,7 @@ return [
 
     'eruda' => env('ERUDA_ENABLED', false),
     'max_search_result' => env('MAX_SEARCH_RESULT', 100),
+    'max_history_result' => env('MAX_HISTORY_RESULT', 100),
 
     /*
     |--------------------------------------------------------------------------

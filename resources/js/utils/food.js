@@ -18,7 +18,14 @@ export const getUnits = (food) => {
   return units;
 }
 
-export const getNewRecipeId = (diary, mealType)  => {
+export const getServingsLabel = (unit) => {
+  if (unit == '人前') {
+    return 'レシビ分量';
+  } else if (unit == 'g') {
+    return 'レシピ総重量';
+  } else {
+    return 'レシピ総容量';
+  }
 }
 
 export const createDiaryItem = (input) => {
@@ -35,7 +42,7 @@ export const createDiaryItem = (input) => {
     amount = amount * 15;
   }
 
-  console.log('unit: ', unit, 'food_unit', food.food_unit);
+  console.log('unit: ', unit, 'amount', amount, 'food_unit', food.food_unit);
   if (food.food_unit == 'g') {
     if (unit == 'g') {
       console.log('amount: ', amount, 'food_amount', food.food_amount);
@@ -75,4 +82,13 @@ export const createDiaryItem = (input) => {
     carbs: food.carbs * rate,
     salt: food.salt * rate,
   };
+}
+
+export const unitAmountString = (item) => {
+  let amount = String(item.amount).replace(/((?<=\.\d+)|\.)0+$/, '');
+  if (item.unit == '大さじ' || item.unit == '小さじ') {
+    return item.unit + amount;
+  } else {
+    return  amount + item.unit;
+  }
 }

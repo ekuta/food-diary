@@ -29,7 +29,6 @@ class FoodController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info("store", $request->post());
         $params = $request->post();
         $params['user_id'] = Auth::id();
         $str = trim(implode(' ', [$params['name'], $params['alias_names'], $params['maker']]));
@@ -43,7 +42,10 @@ class FoodController extends Controller
      */
     public function show(Food $food)
     {
-        //
+        if ($food->user_id != 0 && Auth::id() != $food->user_id) {
+            return $this->responseFailure('権限エラー');
+        }
+        return $this->responseSuccess($food);
     }
 
     /**
@@ -51,7 +53,16 @@ class FoodController extends Controller
      */
     public function update(Request $request, Food $food)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:100',
+        ]);
+        $params = $request->post();
+
+        if (Auth::id() != $food->user_id || $food->id != $params['id']) {
+            return $this->responseFailure('権限エラー');
+        }
+        $food->update($params);
+        return $this->responseSuccess($food);
     }
 
     /**

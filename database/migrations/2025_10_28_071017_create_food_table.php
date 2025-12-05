@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('maker')->nullable();
             $table->string('food_unit')->comment('g, ml, 単位');
             $table->unsignedSmallInteger('food_amount');
-            $table->unsignedSmallInteger('calory');
+            $table->decimal('calory', 6, 1)->nullable();
             $table->decimal('protein', 6, 1)->nullable();
             $table->decimal('fat', 6, 1)->nullable();
             $table->decimal('carbs', 6, 1)->nullable();

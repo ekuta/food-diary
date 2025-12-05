@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ingredient extends Model
+class Regular extends Model
 {
     protected $guarded = [
         'id',
+        'created_at',
+        'updated_at',
     ];
 
     protected $hidden = [
-        'user_id',
-        'regular_id',
         'created_at',
         'updated_at',
     ];
@@ -20,8 +20,7 @@ class Ingredient extends Model
     protected $casts = [
         'id' => 'integer',
         'user_id' => 'integer',
-        'regular_id' => 'integer',
-        'food_id' => 'integer',
+        'servings' => 'float',
         'amount' => 'float',
         'calory' => 'float',
         'protein' => 'float',

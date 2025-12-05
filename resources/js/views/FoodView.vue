@@ -1,10 +1,10 @@
 <template>
-  <v-app-bar color="primary" density="compact" extension-height="80">
+  <v-app-bar color="primary" density="compact" extension-height="60">
     <v-container max-width="960">
       <v-app-bar-title>
         <div class="d-flex align-center justify-space-between">
           <v-icon :icon="mdiWindowClose" @click="router.go(-1);" />
-          栄養成分データベースを検索
+          食品情報の編集
           <div class="tw:w-7.5"></div>
         </div>
       </v-app-bar-title>
@@ -13,9 +13,6 @@
       <v-container max-width="960" class="pt-0 pb-0">
         <v-text-field :prepend-inner-icon="mdiMagnify" density="compact" hide-details variant="solo"
           rounded autofocus @change="search"></v-text-field>
-       <div class="text-caption">
-         可食部100gあたり。出典:日本食品標準成分表(八訂)増補2023年
-       </div>
       </v-container>
     </template>
   </v-app-bar>
@@ -32,6 +29,11 @@
           </v-list-item-subtitle>
         </v-list-item>
       </v-list>
+      <v-row v-if="foods.length == 0" no-gutters>
+        <v-col class="text-right" @click="router.push({ name: 'edit food' , params: { id:  0 } })">
+          <v-btn color="primary" variant="text">新しい食品を追加する</v-btn>
+        </v-col>
+      </v-row>
   </v-container>
   </v-main>
 </template>
@@ -48,7 +50,7 @@
 import router from '@/router';
 import { ref, onMounted } from 'vue';
 import { useStateStore } from '@/stores/state';
-import { searchMextFood } from '@/utils/client';
+import { searchFood } from '@/utils/client';
 import { mdiWindowClose, mdiMagnify } from '@mdi/js';
 
 const state = useStateStore();
@@ -58,12 +60,11 @@ const search = async (e) => {
   if (!e.target.value) {
     return;
   }
-  const res = await searchMextFood(e.target.value);
+  const res = await searchFood(e.target.value);
   foods.value = res.data;
 }
 
 const onSelect = async (food) => {
-  state.mextFood = food;
-  router.go(-1);
+  router.push({ name: 'edit food', params: { id: food.id } });
 }
 </script>
