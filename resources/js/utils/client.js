@@ -121,9 +121,10 @@ export const getDiaryHistory = async () => {
   }
 }
 
-export const storeDiary = async (data) => {
+export const storeDiary = async (recipe) => {
   try {
-    const res = await client.post('/diary', data);
+    console.log("storeDiary: ", recipe);
+    const res = await client.post('/diary', recipe);
     console.log("storeDiary: ", res);
     return res.data;
   } catch (err) {

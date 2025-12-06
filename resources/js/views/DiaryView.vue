@@ -30,33 +30,33 @@
           <v-btn color="primary" :prepend-icon="mdiFood" variant="tonal" class="mx-1"
             @click="addFood(type, diaries[type][0])">食品追加</v-btn>
         </v-row>
-        <template v-for="(diary, dIdx) in diaries[type]" :key="diary.recipe.id">
-          <v-list v-if="diary.items.length" density="compact" slim rounded border class="pb-0 pt-0 mb-1">
-            <v-list-item v-if="diary.recipe.recipe_id" class="recipe-list-item px-1 py-1">
-              <v-list-item-title> {{ diary.recipe.name }} </v-list-item-title>
+        <template v-for="(recipe, dIdx) in diaries[type]" :key="recipe.id">
+          <v-list v-if="recipe.items.length" density="compact" slim rounded border class="pb-0 pt-0 mb-1">
+            <v-list-item v-if="recipe.recipe_id" class="recipe-list-item px-1 py-1">
+              <v-list-item-title> {{ recipe.name }} </v-list-item-title>
               <v-list-item-subtitle>
-                {{ round(diary.recipe.calory * diary.recipe.amount / diary.recipe.servings) }}kcal
+                {{ round(recipe.calory * recipe.amount / recipe.servings) }}kcal
                 </v-list-item-subtitle>
               <template v-slot:prepend>
                 <v-icon :icon="mdiWindowClose" @click="onDeleteRecipe(diaries[type], dIdx)"></v-icon>
               </template>
               <template v-slot:append>
-                <v-btn variant='outlined' slim :text="unitAmountString(diary.recipe)"
-                  style="text-transform: none; font-size: 10px;" @click="onSelectRecipe(diary.recipe)">
+                <v-btn variant='outlined' slim :text="unitAmountString(recipe)"
+                  style="text-transform: none; font-size: 10px;" @click="onSelectRecipe(recipe)">
                 </v-btn>
               </template>
             </v-list-item>
-            <v-list-item v-for="(item, iIdx) in diary.items" :key="item.id" min-height="30"
+            <v-list-item v-for="(item, iIdx) in recipe.items" :key="item.id" min-height="30"
               class="px-1 py-0" :class="{'border-t-sm': iIdx}"
               >
               <v-list-item-title> {{ item.name }} </v-list-item-title>
-              <v-list-item-subtitle v-if="diary.recipe.recipe_id == 0"> {{ round(item.calory) }}kcal </v-list-item-subtitle>
+              <v-list-item-subtitle v-if="recipe.recipe_id == 0"> {{ round(item.calory) }}kcal </v-list-item-subtitle>
               <template v-slot:prepend>
-                <div v-if="diary.recipe.recipe_id" class="px-3"></div>
-                <v-icon v-else :icon="mdiWindowClose" @click="onDeleteItem(diary.items, iIdx)"></v-icon>
+                <div v-if="recipe.recipe_id" class="px-3"></div>
+                <v-icon v-else :icon="mdiWindowClose" @click="onDeleteItem(recipe.items, iIdx)"></v-icon>
               </template>
               <template v-slot:append>
-                <div v-if="diary.recipe.recipe_id" class="text-caption pr-2">
+                <div v-if="recipe.recipe_id" class="text-caption pr-2">
                   {{ unitAmountString(item) }}
                 </div>
                 <v-btn v-else variant='outlined' slim :text="unitAmountString(item)"
@@ -66,13 +66,13 @@
               </template>
             </v-list-item>
 
-            <v-list-item v-if="diary.recipe.recipe_id" min-height="30" class="border-t-sm pa-0">
+            <v-list-item v-if="recipe.recipe_id" min-height="30" class="border-t-sm pa-0">
               <div class="d-flex align-center text-body-2">
               <v-spacer/>
-                レシピ分量: {{ round(diary.recipe.servings, 1) + diary.recipe.unit }}
+                レシピ分量: {{ round(recipe.servings, 1) + recipe.unit }}
               <v-spacer/>
               <v-btn :prepend-icon="mdiNotebookEditOutline" color="primary" variant="text"
-                @click="onEditRecipe(type, diary)"
+                @click="onEditRecipe(recipe)"
                 >
                 レシピを編集
               </v-btn>
@@ -103,8 +103,8 @@ import { useRoute } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { useDiaryStore } from '@/stores/diary';
 import { useRecipeStore } from '@/stores/recipe';
-import { ref, onMounted } from 'vue';
-import { getDate, formatDate, getMealTypeName, round } from '@/utils';
+import { ref, onMounted, toRaw } from 'vue';
+import { formatDate, getMealTypeName, round } from '@/utils';
 import { logout, updateDiary, deleteDiary, getFood } from '@/utils/client';
 import { unitAmountString, getUnits, createDiaryItem } from '@/utils/food';
 import { mdiMenu, mdiWeatherSunset, mdiPlus, mdiWhiteBalanceSunny, mdiWeatherNight, mdiFoodForkDrink, mdiTarget,
@@ -161,24 +161,19 @@ const addRecipe = (meal_type) => {
   router.push({ name: 'select recipe', params: { date: route.params.date, meal_type: meal_type } });
 }
 
-const addFood = (meal_type, diary) => {
+const addFood = (meal_type, recipe) => {
   recipeStore.init({
-    title: formatDate(getDate(route.params.date), 'm月d日(w) ') + getMealTypeName(meal_type) + 'の追加',
-    date: route.params.date,
-    meal_type: meal_type,
-    recipe: diary.recipe,
-    items: diary.items,
+    title: formatDate(new Date(route.params.date), 'm月d日(w) ') + getMealTypeName(meal_type) + 'の追加',
+    recipe: toRaw(recipe),
   });
   router.push({ name: 'select food' });
 }
 
-const onEditRecipe = (meal_type, diary) => {
+const onEditRecipe = (recipe) => {
+  console.log("onEditRecipe: ", recipe);
   recipeStore.init({
-      title: diary.recipe.name + 'の食材を追加',
-      date: route.params.date,
-      meal_type: meal_type,
-      recipe: diary.recipe,
-      items: diary.items,
+      title: recipe.name + 'の食材を追加',
+      recipe: toRaw(recipe),
     });
   router.push({ name: 'edit recipe' });
 }

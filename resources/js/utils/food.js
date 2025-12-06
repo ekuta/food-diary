@@ -1,3 +1,8 @@
+export class Recipe {
+  constructor(recipe) {
+    Object.assign(this, recipe);
+  }
+}
 
 // format: YYYYMMDD
 export const getUnits = (food) => {

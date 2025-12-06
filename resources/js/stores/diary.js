@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { getDiaries as clientGetDiaries} from '@/utils/client';
+import { Recipe } from '@/utils/food';
 
 export const useDiaryStore = defineStore('diary', () => {
   const diaries = ref({});
@@ -11,26 +12,31 @@ export const useDiaryStore = defineStore('diary', () => {
     }
     const res = await clientGetDiaries(date);
     if (res.success) {
-      diaries.value[date] = res.data;
+      const meals = {};
+      Object.entries(res.data).forEach(([key, value]) => {
+        meals[key] = [];
+        value.forEach((recipe) => {
+          meals[key].push(new Recipe(recipe));
+        });
+      });
+      diaries.value[date] = meals;
       return diaries.value[date];
     }
   }
   const getNextRecipeId = async (date, meal_type) => {
-    const target = (await getDiaries(date))[meal_type];
-    return target.reduce((max, y) => { return max > y.recipe.recipe_id ? max : y.recipe.recipe_id }, 0) + 1;
+    const target = diaries.value[recipe.date][recipe.meal_type];
+    return target.reduce((max, y) => { return max > y.recipe_id ? max : y.recipe_id }, 0) + 1;
   }
 
-  const apply = async (date, meal_type, recipe, items) => {
-    const target = (await getDiaries(date))[meal_type];
-    const index = target.findIndex((diary) => diary.recipe.recipe_id == recipe.recipe_id);
-    console.log("apply: index", index);
+  const apply = async (recipe) => {
+    const target = diaries.value[recipe.date][recipe.meal_type];
+    const index = target.findIndex((diary) => diary.recipe_id == recipe.recipe_id);
     if (index != -1) {
       target[index].recipe = recipe;
-      target[index].items = items;
     } else {
-      target.push({ recipe: recipe, items: items });
-      console.log("apply: ", target);
+      target.push(recipe);
     }
+    console.log("apply: ", target);
   }
 
   const $reset = () => {

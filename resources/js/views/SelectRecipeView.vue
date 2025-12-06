@@ -78,7 +78,7 @@ import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ref, computed, watch, onMounted } from 'vue';
 import { round } from '@/utils';
-import { unitAmountString } from '@/utils/food';
+import { Recipe, unitAmountString } from '@/utils/food';
 import { useRecipeStore } from '@/stores/recipe';
 import { useDiaryStore } from '@/stores/diary';
 import { getDate, formatDate, getMealTypeName } from '@/utils';
@@ -114,15 +114,16 @@ const onClose = async (result) => {
 
     recipeStore.init({
       title: 'レシピの食材を選ぶ',
-      date: route.params.date,
-      meal_type: route.params.meal_type,
-      recipe: {
+      recipe: new Recipe ({
+        meal_type: route.params.meal_type,
+        date: route.params.date,
         recipe_id: next_recipe_id,
         name: dialog.value.name,
         servings: dialog.value.servings,
         amount: dialog.value.amount,
         unit: dialog.value.unit,
-      },
+        items: [],
+      }),
     });
     await router.replace({ name: 'edit recipe' });
     router.push({ name: 'select food' });
@@ -137,13 +138,12 @@ const onSelect = async (recipe) => {
   if (!res.success) {
     return;
   }
-  res.data.recipe.recipe_id = await diaryStore.getNextRecipeId(route.params.date, route.params.meal_type);
+  res.data.recipe_id = await diaryStore.getNextRecipeId(route.params.date, route.params.meal_type);
+  res.data.date = route.params.date;
+  res.data.meal_type = route.params.meal_type;
   recipeStore.init({
     title: recipe.name + 'の食材を追加',
-    date: route.params.date,
-    meal_type: route.params.meal_type,
-    recipe: res.data.recipe,
-    items: res.data.items,
+    recipe: new Recipe(res.data),
   });
   if (await recipeStore.storeRecipe()) {
     router.replace({ name: 'edit recipe' });

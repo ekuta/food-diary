@@ -3,9 +3,9 @@
     <v-container max-width="960">
       <v-app-bar-title>
         <div class="d-flex align-center justify-space-between">
-          <v-icon :icon="mdiChevronLeft" @click="router.go(-1)" />
-          {{ formatDate(getDate(recipeStore.date), 'm月d日(w)') }}
-          {{ getMealTypeName(recipeStore.meal_type) }}
+          <v-icon :icon="mdiChevronLeft" @click="onSubmit()" />
+          {{ formatDate(new Date(recipeStore.recipe.date), 'm月d日(w)') }}
+          {{ getMealTypeName(recipeStore.recipe.meal_type) }}
           {{ 'レシピ編集' }}
           <p></p>
         </div>
@@ -32,7 +32,7 @@
         </template>
       </v-list-item>
       <v-list lines="two" density="compact" class="pt-1">
-        <v-list-item v-for="(item, index) in recipeStore.items" :key="item"
+        <v-list-item v-for="(item, index) in recipeStore.recipe.items" :key="item"
           min-height="48" border rounded="lg" class="py-0 mb-1">
           <v-list-item-title>
             {{ item.name }}
@@ -45,7 +45,7 @@
         </template>
         <template v-slot:append>
           <v-btn variant='outlined' slim :text="unitAmountString(item)" style="text-transform: none; font-size: 10px;"
-            @click="onSelect(index, item)"
+            @click="onSelect(item)"
             >
           </v-btn>
         </template>
@@ -64,7 +64,7 @@
   <v-footer app height="50" class="bg-blue-lighten-5">
     <v-container max-width="960" class="position-relative">
       Footer
-      <v-fab absolute location="right center" variant="tonal" @click="router.go(-1);">
+      <v-fab absolute location="right center" variant="tonal" @click="onSubmit()">
         完了
       </v-fab>
     </v-container>
@@ -83,8 +83,8 @@ import router from '@/router';
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue';
 import { useRecipeStore } from '@/stores/recipe';
-import { getFood, deleteDiary } from '@/utils/client';
-import { getDate, formatDate, getMealTypeName, round } from '@/utils';
+import { getFood } from '@/utils/client';
+import { formatDate, getMealTypeName, round } from '@/utils';
 import { getUnits, createDiaryItem, unitAmountString } from '@/utils/food';
 import { mdiWindowClose, mdiChevronLeft, mdiPlus} from '@mdi/js';
 import InputAmountDialog from '@/components/InputAmountDialog.vue';
@@ -105,16 +105,10 @@ const rules = {
 };
 
 const onDelete = async (index, item) => {
-  if (item.id) {
-    const res = await deleteDiary(item.id);
-    if (!res.success) {
-      return;
-    }
-  }
   recipeStore.deleteItem(index);
 }
 
-const onSelect = async (index, item) => {
+const onSelect = async (item) => {
   const res = await getFood(item.food_id);
   const food = res.data;
   dialog.value = {
@@ -125,14 +119,14 @@ const onSelect = async (index, item) => {
     amount: String(item.amount),
     first: true,
     food: food,
-    index: index,
+    item: item,
   }
 }
 
 const onClose = (result) => {
   dialog.value.open = false;
   if (result) {
-    recipeStore.setItem(dialog.value.index, createDiaryItem(dialog.value));
+    Object.assign(dialog.value.item, createDiaryItem(dialog.value));
   }
 }
 
@@ -152,6 +146,12 @@ const onRecipeClose = (result) => {
   recipeStore.recipe.name = recipeDialog.value.name;
   recipeStore.recipe.servings = recipeDialog.value.servings;
   recipeStore.recipe.amount = recipeDialog.value.amount;
+}
+
+const onSubmit = async () => {
+  if (await recipeStore.submit()) {
+    router.go(-1);
+  }
 }
 
 onMounted(async () => {

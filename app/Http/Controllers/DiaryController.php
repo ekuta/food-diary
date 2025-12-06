@@ -24,14 +24,13 @@ class DiaryController extends Controller
             ->orderBy('meal_type')->orderBy('recipe_id')->orderBy('id')->get();
         $result = [];
         foreach (MealType::cases() as $type) {
-            $result[$type->value][] = ['recipe' => ['recipe_id' => 0], 'items' => []];
+            $result[$type->value][] = ['recipe_id' => 0, 'date' => $date, 'meal_type' => $type->value, 'items' => []];
         }
         $index = 0;
         foreach ($items as $item) {
             if ($item->food_id == 0) {
                 $index ++;
-                $result[$item->meal_type->value][$index]['recipe'] = $item->toArray();
-                $result[$item->meal_type->value][$index]['recipe']['recipe_id'] = $item->recipe_id;
+                $result[$item->meal_type->value][$index] = $item->makeVisible(Diary::RECIPE_VISIBLE)->toArray();
             } else {
                 $result[$item->meal_type->value][$index]['items'][] = $item->toArray();
             }
@@ -64,42 +63,37 @@ class DiaryController extends Controller
      */
     public function store(Request $request)
     {
-        $params = $request->post();
-        Log::info("store: " . var_export($params, true));
+        $recipe = $request->post();
+        Log::info("store: " . var_export($recipe, true));
         $user_id = Auth::id();
-        $date = date('Y-m-d', strtotime($params['date']));
-        $meal_type = $params['meal_type'];
-        $recipe = $params['recipe'];
+        $date = date('Y-m-d', strtotime($recipe['date']));
+        $meal_type = $recipe['meal_type'];
         $recipe_id = $recipe['recipe_id'];
-        $items = $params['items'];
-        if ($recipe_id) {
-            $recipe['food_id'] = 0;
-            array_unshift($items, $recipe);
-        } else {
-            $results['recipe'] = $recipe;
+        $items = $recipe['items'];
+        unset($recipe['items']);
+
+        $exists = Diary::where('user_id', $user_id)->where('date', $date)->where('meal_type', $meal_type)
+            ->where('recipe_id', $recipe_id)->exists();
+        if ($exists) {
+            return $this->responseFailure("登録済みです");
         }
 
         DB::beginTransaction();
         try {
+            if ($recipe_id) {
+                $recipe['user_id'] = $user_id;
+                $result = Diary::create($recipe)->toArray();
+            } else {
+                $recipe['food_id'] = 0;
+                $result = $recipe;
+            }
+            $result['items'] = [];
             foreach ($items as $item) {
-                if (isset($item['id'])) {
-                    $result = $item;
-                } else {
-                    $item['user_id'] = $user_id;
-                    $item['date'] = $date;
-                    $item['meal_type'] = $meal_type;
-                    $item['recipe_id'] = $recipe_id;
-                    $diary = Diary::create($item);
-                    $result = $diary->toArray();
-                    if (empty($result['food_id'])) {
-                        $result['recipe_id'] = $recipe_id;
-                    }
-                }
-                if ($result['food_id']) {
-                    $results['items'][] = $result;
-                } else {
-                    $results['recipe'] = $result;
-                }
+                $item['user_id'] = $user_id;
+                $item['date'] = $date;
+                $item['meal_type'] = $meal_type;
+                $item['recipe_id'] = $recipe_id;
+                $result['items'][] = Diary::create($item)->toArray();
             }
             DB::commit();
         } catch (\Exception $e) {
@@ -107,18 +101,18 @@ class DiaryController extends Controller
             Log::error("Exception: $e");
             return $this->responseFailure($e->getMessage());
         }
-        return $this->responseSuccess($results);
+        return $this->responseSuccess($result);
     }
 
     /**
-     * Display the specified resource.
+     * Used to add new recipe from history of diary
      */
     public function show(Diary $diary)
     {
         if ($diary->user_id != 0 && Auth::id() != $diary->user_id) {
             return $this->responseFailure('権限エラー');
         }
-        $result['recipe'] = $diary->makeHidden('id')->toArray();
+        $result = $diary->makeHidden('id')->toArray();
         $items = Diary::where('user_id', $diary->user_id)->where('date', $diary->date)
             ->where('meal_type', $diary->meal_type) ->where('recipe_id', $diary->recipe_id)->whereNot('food_id', 0)
             ->get();
@@ -132,11 +126,60 @@ class DiaryController extends Controller
     public function update(Request $request, Diary $diary)
     {
         $params = $request->post();
+        Log::info("update: " . var_export($params, true));
         if (Auth::id() != $diary->user_id || $diary->id != $params['id']) {
             return $this->responseFailure('権限エラー');
         }
-        $diary->update($params);
-        return $this->responseSuccess();
+
+        if ($diary->food_id) {
+            $diary->update($params);
+            return $this->responseSuccess();
+        }
+
+        $items = $params['items'];
+        unset($params['items']);
+        $targets = Diary::where('user_id', $diary->user_id)->where('date', $diary->date)
+            ->where('meal_type', $diary->meal_type)->where('recipe_id', $diary->recipe_id)
+            ->whereNot('food_id', 0)->get();
+        Log::info("update: current ids: ", $targets->pluck('id')->toArray());
+
+        DB::beginTransaction();
+        $result = $params;
+        try {
+            $diary->update($params);
+            foreach ($items as $item) {
+                $item['user_id'] = $diary->user_id;
+                $item['date'] = $diary->date;
+                $item['meal_type'] = $diary->meal_type;
+                $item['recipe_id'] = $diary->recipe_id;
+                if (empty($item['id'])) {
+                    $model = Diary::create($item);
+                    $result['items'][] = $model->toArray();
+                } else {
+                    $target = $targets->first(function ($value) use($item) {
+                        return $value->id == $item['id'];
+                    });
+                    if (is_null($target)) {
+                        throw new \Exception("不整合を検出しました。");
+                    }
+                    $target->update($item);
+                    $result['items'][] = $item;
+                    $targets = $targets->filter(function ($value) use ($item) {
+                        return $value->id != $item['id'];
+                    });
+                }
+            }
+            $targets->each(function ($value) {
+                $value->delete();
+            });
+            Log::info("update: deleted ids: ", $targets->pluck('id')->toArray());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Exception: $e");
+            return $this->responseFailure($e->getMessage());
+        }
+        return $this->responseSuccess($result);
     }
 
     /**

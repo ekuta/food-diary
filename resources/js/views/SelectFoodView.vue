@@ -18,7 +18,7 @@
         <v-col class="text-center">
           <v-btn-toggle v-model="target" variant="outlined" divided mandatory class="tw:w-2xl">
             <v-btn value="history" class="px-2 flex-grow-1">
-              {{ getMealTypeName(recipeStore.meal_type) }}の履歴
+              {{ getMealTypeName(recipeStore.recipe.meal_type) }}の履歴
             </v-btn>
             <v-btn value="historyAll" class="px-2 flex-grow-1">
               全ての履歴
@@ -168,17 +168,12 @@ const onClose = (result) => {
 }
 
 const onSubmit = async () => {
-  if (!recipeStore.isUpdated) {
+  if (recipeStore.recipe_id || !recipeStore.isUpdated) {
     router.go(-1);
     return;
   }
   if (await recipeStore.storeRecipe()) {
-    if (recipeStore.recipe_id == 0) {
-      recipeStore.$reset();
-    } else {
-      recipeStore.recipe = res.data.recipe;
-      recipeStore.items = res.data.items;
-    }
+    recipeStore.$reset();
     router.go(-1);
   }
 }

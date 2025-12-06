@@ -8,6 +8,8 @@ use App\Enums\MealType;
 
 class Diary extends Model
 {
+    const RECIPE_VISIBLE = ['date', 'meal_type', 'recipe_id'];
+
     protected $guarded = [
         'id',
     ];

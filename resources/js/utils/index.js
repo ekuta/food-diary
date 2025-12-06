@@ -1,12 +1,13 @@
 
 // format: YYYYMMDD
 export const getDate = (formattedDate) => {
-  const date = formattedDate.slice(0, 4) + '/' + formattedDate.substring(4, 6)  + '/' + formattedDate.slice(-2);
-  return new Date(date + ' 00:00');
+//  const date = formattedDate.slice(0, 4) + '/' + formattedDate.substring(4, 6)  + '/' + formattedDate.slice(-2);
+  return new Date(formattedDate);
+//  return new Date(date + ' 00:00');
 }
 
 // Format is almost same as php except week(w) returns not number but week.
-export const formatDate = (date = null, format = "Ymd") => {
+export const formatDate = (date = null, format = "Y-m-d") => {
   if (date == null) {
     date = new Date();
   }
